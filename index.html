@@ -1,0 +1,639 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Skipper Database</title>
+  <meta name="description" content="">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <div id="container">
+      <p class="tagline">
+		Skippper Database
+	  </p>
+      <div id="main" role="main">
+        <div class="addon-bar">
+			<div class="inner">
+			  <a href="#" class="addon-button selected" section='champions'><span>Champion Addons</span></a>
+			  <a href="#" class="addon-button" section='utility'><span>Utility Addons</span></a>
+			  <!-- <a href="#" class="addon-button" section='paid'><span>Paid Addons</span></a> !-->
+			</div>
+        </div>
+        <article class="markdown-body">
+<div class='section' section='champions'>
+			<div>
+				<input id="championSearchTextbox" class="searchBoxes" type="text" autocomplete="off" name="championSearch" placeholder="Search by Champion.." oninput="CreateChampionList('False')"/>
+				
+				<input id="SupportType" type="image" alt="Support" onclick="sortChampionByType(this)" src="http://gamin-123-lol.weebly.com/uploads/4/2/5/0/42507289/2380994.png?459" /><!-- Support -->
+				<input id="TankType" type="image" alt="Tank" onclick="sortChampionByType(this)" src="http://gamin-123-lol.weebly.com/uploads/4/2/5/0/42507289/3507982_orig.png" /><!-- Tank -->
+				<input id="FighterType" type="image" alt="Fighter" onclick="sortChampionByType(this)" src="http://gamin-123-lol.weebly.com/uploads/4/2/5/0/42507289/6971182_orig.png" /><!-- Fighter -->
+				<input id="MageType" type="image" alt="Mage" onclick="sortChampionByType(this)" src="http://gamin-123-lol.weebly.com/uploads/4/2/5/0/42507289/2160346_orig.png" /><!-- Mage -->
+				<input id="AssasinType" type="image" alt="Assasin" onclick="sortChampionByType(this)" src="http://gamin-123-lol.weebly.com/uploads/4/2/5/0/42507289/6959784.png?316" /><!-- Assasin -->
+				<input id="MarksmanType" type="image" alt="Marksman" onclick="sortChampionByType(this)" src="http://gamin-123-lol.weebly.com/uploads/4/2/5/0/42507289/185800.png?340" /><!-- Marksman -->
+			</div>
+			<div>
+				<select id="ChampionListType" class="comboBox" onchange="CreateChampionList('False')">
+					<option value="AllChamps">All Champions</option>
+					<option selected="selected" value="ScriptsAvailable">Scripts Available</option>
+					<option value="ScriptsNotAvailable">Scripts Not Available</option>
+				</select>
+				</p>
+			</div>
+			<div class="addonlist">
+				<ol id="championList" class="primary"></ol>
+				<ol id="scriptList" class="secondary"></ol>
+			</div>
+</div>
+<div class='section' section='utility' style='display:none;'>
+			<div>
+					<!--<input id="championSearchTextbox" class="searchBoxes" type="text" autocomplete="off" name="championSearch" placeholder="Search by Champion.." oninput="CreatetypeList()"/>-->
+				</div>
+			<div class="addonlist">
+				<ol id="typeList" class="primary">
+				  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+				  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+				  <script>
+						$(
+						  function () {
+								$("#typeList").selectable();
+							}
+						);
+				  </script>
+				</ol>
+				<ol id="scriptList2" class="secondary"></ol>
+			</div>
+<style>
+  #feedback { font-size: 1.4em; }
+  #typeList .ui-selecting { background: #FECA40; }
+  #typeList .ui-selected { background: #F39814; color: white; }
+  #typeList { list-style-type: none; margin: 0; padding: 0; width: 30% }
+  #typeList li { margin: 0px; padding: 5px 5px 10px 5px; font-size: 16px; height: 14px; }
+  #scriptList2 .ui-selecting { background: #FECA40; }
+  #scriptList2 .ui-selected { background: #F39814; color: white; }
+  #scriptList2 { list-style-type: none; margin: 0; padding: 0; width: 30% }
+  #scriptList2 li { margin: 3px; padding: 5px; font-size: 16px; height: 14px; }
+</style>
+<script>
+	var scriptDatabase = ["Evades##EzEvade|https://github.com/SkipperSharp/Addons/##Moon Evade|https://github.com/SkipperSharp/Addons/##Leviathan Evade|https://github.com/AkenoHimejimaa/Skipper##OrbwalkerAndEvade|https://github.com/deadnotdeath/Skipper",
+	"Awareness##Leviathan Awareness|https://github.com/AkenoHimejimaa/Skipper",
+	"Activators##Master Activator|https://github.com/SkipperSharp/Addons",
+        "Orbwalkers##OrbwalkerAndEvade|https://github.com/deadnotdeath/Skipper"];
+		
+	//populating main list
+    function CreatetypeList()
+    {
+        var typeList = document.getElementById("typeList");
+        var scriptList = document.getElementById("scriptList2");
+        var possibleScripts = new Array();
+		
+        for (i = 0; i < scriptDatabase.length; i++)
+			possibleScripts.splice(possibleScripts.length, 0, scriptDatabase[i]);
+        
+        while (typeList.hasChildNodes())
+            typeList.removeChild(typeList.lastChild);
+
+        for(i = 0; i < possibleScripts.length; i++)
+        {
+            var newtypeListItem = document.createElement("li");	
+            var newtypeListItemNode = document.createTextNode(possibleScripts[i].split('##')[0]);
+            newtypeListItem.onclick = function () { LoadChampionScripts2(this); };
+
+            newtypeListItem.appendChild(newtypeListItemNode);
+			
+            typeList.appendChild(newtypeListItem);
+        }
+    }	
+	//when clicking the champion
+    function LoadChampionScripts2(evt)
+    {	
+        var scriptList = document.getElementById("scriptList2");
+		
+		var typeIndex = -1;
+		for(i = 0; i < scriptDatabase.length; i++)
+			if(scriptDatabase[i].includes(evt.innerHTML))
+				typeIndex = i;
+		
+        while (scriptList.hasChildNodes())
+            scriptList.removeChild(scriptList.lastChild);
+			
+			//champs with no addons
+		if(scriptDatabase[typeIndex].split('##').length == 1)
+		{
+			scriptName = "None available";
+            var newListItem = document.createElement("li");
+            var newListItemNode = document.createTextNode(scriptName);
+            newListItem.appendChild(newListItemNode);
+            scriptList.appendChild(newListItem);
+		}
+			//champs with addons
+		for(i = 1; i < scriptDatabase[typeIndex].split('##').length; i++)
+		{	
+			var scriptName = scriptDatabase[typeIndex].split('##')[i].split('|')[0];
+            var newListItem = document.createElement("li");
+            var newListItemNode = document.createTextNode(scriptName);
+			
+            newListItem.appendChild(newListItemNode);
+			
+			var githubButton = document.createElement("button");
+			githubButton.innerHTML = "GitHub";
+			githubButton.onclick = function () { LoadURL2(this, typeIndex, 1); };
+						
+			newListItem.appendChild(githubButton);
+			
+            scriptList.appendChild(newListItem);
+			
+		}
+    }
+    function LoadURL2(element, typeIndex, linkIndex)
+    {
+		for(i = 1; i < scriptDatabase[typeIndex].split('##').length; i++)
+		{	
+			var githubLink = scriptDatabase[typeIndex].split('##')[i].split('|')[1];
+			if(githubLink[githubLink.length - 1] != '/')
+				githubLink = githubLink + "/";
+			window.open(githubLink);
+		}
+	}
+	function launchGitHub(element, typeIndex)
+	{
+		LoadURL(element, typeIndex, 1);
+	}
+	function launchForum(element, typeIndex)
+	{
+		LoadURL(element, typeIndex, 0);
+	}
+	function launchInstall(element, typeIndex)
+	{
+		LoadURL(element, typeIndex, 2);
+	}
+</script>
+</div>
+<div class='section' section='paid' style='display:none'>
+			<div>
+				<input id="championSearchTextbox" class="searchBoxes" type="text" autocomplete="off" name="championSearch" placeholder="Search by Champion.." oninput="CreateChampionList('False')"/>
+			</div>
+			<div class="addonlist">
+				<ol id="championList" class="primary"></ol>
+				<ol id="scriptList3" class="secondary"></ol>
+			</div>
+</div>
+       </article>
+      </div>
+    </div>
+  </div>
+</body>
+
+<style>
+  #feedback { font-size: 1.4em; }
+  #championList .ui-selecting { background: #FECA40; }
+  #championList .ui-selected { background: #F39814; color: white; }
+  #championList { list-style-type: none; margin: 0; padding: 0; width: 30% }
+  #championList li { margin: 0px; padding: 5px 5px 10px 5px; font-size: 16px; height: 14px; }
+  #scriptList .ui-selecting { background: #FECA40; }
+  #scriptList .ui-selected { background: #F39814; color: white; }
+  #scriptList { list-style-type: none; margin: 0; padding: 0; width: 30% }
+  #scriptList li { margin: 3px; padding: 5px; font-size: 16px; height: 14px; }
+</style>
+
+<script>
+$(document).ready(function() {
+  $('.addon-button').click(function() {
+    let section = $(this).attr('section');
+    $('.addon-button').removeClass('selected');
+    $(this).addClass('selected');
+    $('.section[section]').hide();
+    $('.section[section="' + section + '"]').show();
+  });
+});
+</script>
+
+<script>
+	var championNames = ["Aatrox##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Ahri##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Akali##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Akshan##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Alistar##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Amumu##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Anivia##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Annie##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Aphelios##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Ashe##Moon Champions|https://github.com/SkipperSharp/Addons##OrbwalkerAndEvade|https://github.com/deadnotdeath/Skipper", 
+"Aurelion Sol",
+"Azir##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Bard##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Belveth##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Blitzcrank##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Brand##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Braum##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Caitlyn##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Camille##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Cassiopeia##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Cho'Gath##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Corki##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Darius##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Diana##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Dr. Mundo##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Draven##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Ekko##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Elise##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Evelynn##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Ezreal##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Fiddlesticks##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Fiora##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Fizz##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Galio##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Gangplank##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Garen##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Gnar##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Gragas##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Graves##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Gwen##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Hecarim##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Heimerdinger##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Illaoi##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Irelia##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Ivern##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Janna##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons", 
+"Jarvan IV##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Jax##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Jayce##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Jhin##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Jinx##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon DIY|https://github.com/SkipperSharp/Addons",
+"K'Sante",
+"Kaisa##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",  
+"Kalista##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Karma##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Karthus##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Kassadin##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Katarina##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Kayn##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Kayle##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Kennen##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Kha'Zix##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Kindred##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Kled##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Kog'Maw##Moon Champions|https://github.com/SkipperSharp/Addons",
+"LeBlanc##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Lee Sin##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Leona##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Lillia##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Lissandra##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Lucian##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Lulu##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Lux##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Malphite##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Malzahar##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Maokai##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Master Yi##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Milio",
+"Miss Fortune##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Mordekaiser##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Morgana##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Naafiri",
+"Nami##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Nasus##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Nautilus##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Neeko##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Nidalee##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Nilah##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Nocturne##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Nunu##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Olaf##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Orianna##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Ornn##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Pantheon##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Poppy##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Pyke##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Quinn##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Rakan##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Rammus##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Rek'Sai##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Rell##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Renata Glasc##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Renekton##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Rengar##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Riven##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Rumble##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Ryze##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Samira##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons##OrbwalkerAndEvade|https://github.com/deadnotdeath/Skipper",
+"Sejuani##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Senna##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Seraphine##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Sett##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Shaco##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Shen##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Shyvana##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Singed##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Sion##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Sivir##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Skarner##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Sona##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Soraka##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Swain##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Sylas##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Syndra##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Tahm Kench##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Taliyah##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Talon##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Taric##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Teemo##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Thresh##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Tristana##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Trundle##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Tryndamere##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Twisted Fate##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Twitch##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Udyr##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Urgot##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Varus##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Vayne##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Veigar##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Vel'Koz##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Vi##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Viktor##Leviathan AIO|https://github.com/AkenoHimejimaa/Skipper##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons", 
+"Vex##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Viego##Moon Champions|https://github.com/SkipperSharp/Addons", 
+"Vladimir##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Volibear##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Warwick##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Wukong##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Xayah##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",
+"Xerath##Moon Champions|https://github.com/SkipperSharp/Addons",  
+"Xin Zhao##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Yasuo##Moon Champions|https://github.com/SkipperSharp/Addons##Moon DIY|https://github.com/SkipperSharp/Addons",  
+"Yone##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Yorick##Moon Champions|https://github.com/SkipperSharp/Addons",    
+"Yuumi##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Zac##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Zed##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Zeri##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Ziggs##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Zilean##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Zoe##Moon Champions|https://github.com/SkipperSharp/Addons",
+"Zyra##Moon Champions|https://github.com/SkipperSharp/Addons"]
+	
+	//populating main list
+    function CreateChampionList(initial)
+    {
+        var element = document.getElementById("championSearchTextbox");
+        var championList = document.getElementById("championList");
+		var comboBox = document.getElementById("ChampionListType");
+		
+		if(initial == 'True')
+		{
+			var url = window.location.href;
+			
+			if(url.includes("?"))
+			{
+				element.value = url.split("?")[1].replace("%20", " ");
+				comboBox.value = "AllChamps";
+			}
+		}
+		else
+		{
+			var listIds = ["SupportType", "TankType", "FighterType", "MageType", "AssasinType", "MarksmanType"];
+			
+			for(i = 0; i < listIds.length; i++)
+			{
+				document.getElementById(listIds[i]).value = "notselected";
+				document.getElementById(listIds[i]).style.borderColor = "#000000";
+			}
+		}
+		
+        var possibleChampions = new Array();
+
+        for (i = 0; i < championNames.length; i++)
+            if (championNames[i].split("##")[0].toLowerCase().includes(element.value.toLowerCase()))
+			{
+				if(comboBox.value == "AllChamps")
+					possibleChampions.splice(possibleChampions.length, 0, championNames[i]);
+				else if(comboBox.value == "ScriptsAvailable" && championNames[i].split("##").length > 1)
+					possibleChampions.splice(possibleChampions.length, 0, championNames[i]);
+				else if(comboBox.value == "ScriptsNotAvailable" && championNames[i].split("##").length == 1)
+					possibleChampions.splice(possibleChampions.length, 0, championNames[i]);
+			}
+		
+		AddChampionsToList(possibleChampions);
+    }	
+	//when clicking the champion
+    function LoadChampionScripts(evt)
+    {	
+        var scriptList = document.getElementById("scriptList");
+        var championList = document.getElementById("championList");
+		var oldSelectedItem = document.getElementById(championList.value);
+		
+		if(oldSelectedItem != null)
+		{
+			oldSelectedItem.style.backgroundColor = "#FFF";
+			oldSelectedItem.style.color = "black";
+		}
+		
+		evt.style.backgroundColor = "#F39814";
+		evt.style.color = "white";
+		
+		//set newly selected entity
+		championList.value = evt.id;
+			
+		var champIndex = -1;
+		
+		for(i = 0; i < championNames.length; i++)
+			if(championNames[i].split('##')[0].toLowerCase() == evt.innerHTML.toLowerCase())
+				champIndex = i;
+		
+        while (scriptList.hasChildNodes())
+            scriptList.removeChild(scriptList.lastChild);
+			
+		//champs with no addons
+		if(championNames[champIndex].split('##').length == 1)
+		{
+			scriptName = "None available for this champion";
+            var newListItem = document.createElement("li");
+            var newListItemNode = document.createTextNode(scriptName);
+            newListItem.appendChild(newListItemNode);
+            scriptList.appendChild(newListItem);
+		}
+		
+		//champs with addons
+		for(i = 1; i < championNames[champIndex].split('##').length; i++)
+		{	
+			var scriptName = championNames[champIndex].split('##')[i].split('|')[0];
+            var newListItem = document.createElement("li");
+            var newListItemNode = document.createTextNode(scriptName);
+			
+            newListItem.appendChild(newListItemNode);
+			
+			var githubButton = document.createElement("button");
+			githubButton.innerHTML = "GitHub";
+			githubButton.onclick = function () { launchGitHub(this, champIndex); };
+						
+			newListItem.appendChild(githubButton);
+			
+            scriptList.appendChild(newListItem);
+		}
+    }
+	//when clicking the script
+    function LoadURL(element, champIndex, linkIndex)
+    {
+		for(i = 1; i < championNames[champIndex].split('##').length; i++)
+		{	
+			if(championNames[champIndex].split('##')[i].includes(element.parentNode.innerHTML.split("<")[0]))
+			{
+				var githubLink = championNames[champIndex].split('##')[i].split('|')[1];
+				if(githubLink[githubLink.length] != '/')
+					githubLink = githubLink + "/";
+				window.open(githubLink);
+			}
+		}
+	}
+	function launchGitHub(element, champIndex)
+	{
+		LoadURL(element, champIndex, 1);
+	}
+	function launchForum(element, champIndex)
+	{
+		LoadURL(element, champIndex, 0);
+	}
+	function launchInstall(element, champIndex)
+	{
+		LoadURL(element, champIndex, 2);
+	}
+	function sortChampionByType(element)
+	{
+        var championList = document.getElementById("championList");
+		var comboBox = document.getElementById("ChampionListType");
+        var searchTextBox = document.getElementById("championSearchTextbox");
+		
+		searchTextBox.value = "";
+		
+		var listIds = ["SupportType", "TankType", "FighterType", "MageType", "AssasinType", "MarksmanType"];
+		
+		var typeChampions;
+		if(element.id == "SupportType")
+			typeChampions = ["Alistar", "Anivia", "Annie", "Bard", "Blitzcrank", "Braum", "Brand", "Ivern", "Janna", "Karma", "Leona", "Lulu", "Lux", "Milio", "Morgana", "Nami", "Nautilus", "Neeko", "Nunu", "Pyke", "Rell", "Renata Glasc", "Senna", "Seraphine", "Shen", "Sion", "Sona", "Soraka", "Tahm Kench", "Taric", "Thresh", "Trundle", "Vel'Koz", "Volibear", "Yuumi", "Zilean", "Zyra"];
+		else if(element.id == "TankType")
+			typeChampions = ["Alistar", "Amumu", "Blitzcrank", "Braum", "Cho'Gath", "Darius", "Dr. Mundo", "Galio", "Garen", "Gnar", "Hecarim", "Illaoi", "Jarvan IV", "K'Sante", "Kled", "Leona", "Malphite", "Maokai", "Nasus", "Nautilus", "Nunu", "Olaf", "Ornn", "Poppy", "Rammus", "Renekton", "Sejuani", "Sett", "Shen", "Shyvana", "Singed", "Sion", "Skarner", "Tahm Kench", "Trundle", "Udyr", "Vladimir", "Volibear", "Warwick", "Wukong", "Yorick", "Zac"];	
+		else if(element.id == "FighterType")
+			typeChampions = ["Aatrox", "Blitzcrank", "Camille", "Darius", "Diana", "Ekko", "Fiora", "Fizz", "Gangplank", "Garen", "Gnar", "Hecarim", "Illaoi", "Irelia", "Jarvan IV", "Jax", "Jayce", "Kayle", "Kha'Zix", "Kled", "Lee Sin", "Malphite", "Master Yi", "Mordekaiser", "Nasus", "Nautilus", "Nidalee", "Nocturne", "Nunu", "Olaf", "Pantheon", "Poppy", "Quinn", "Rammus", "Rek'Sai", "Renekton", "Rengar", "Riven", "Rumble", "Ryze", "Sejuani", "Shyvana", "Singed", "Sion", "Skarner", "Swain", "Talon", "Taric", "Trundle", "Tryndamere", "Udyr", "Urgot", "Vi", "Volibear", "Warwick", "Wukong", "Xin Zhao", "Yasuo", "Yone", "Yorick", "Zac", "Zed"];	
+		else if(element.id == "MageType")
+			typeChampions = ["Ahri", "Amumu", "Anivia", "Annie", "Aurelion Sol", "Azir", "Bard", "Brand", "Cassiopeia", "Cho'Gath", "Diana", "Elise", "Evelynn", "Ezreal", "Fiddlesticks", "Galio", "Gragas", "Heimerdinger", "Ivern", "Janna", "Karma", "Karthus", "Kassadin", "Katarina", "Kennen", "Kog'Maw", "LeBlanc", "Lissandra", "Lulu", "Lux", "Malzahar", "Maokai", "Morgana", "Nami", "Neeko", "Nunu", "Orianna", "Rumble", "Ryze", "Sona", "Soraka", "Swain", "Sylas", "Syndra", "Taliyah", "Twisted Fate", "Varus", "Veigar", "Vel'Koz", "Vex", "Viktor", "Vladimir", "Xerath", "Ziggs", "Zilean", "Zoe", "Zyra"];
+		else if(element.id == "AssasinType")
+			typeChampions = ["Ahri", "Akali", "Akshan", "Belveth", "Diana", "Ekko", "Evelynn", "Fizz", "Gwen", "Kassadin", "Katarina", "Kayn", "Kha'Zix", "LeBlanc", "Lillia", "Master Yi", "Naafiri", "Nidalee", "Nocturne", "Pyke", "Rengar", "Shaco", "Talon", "Zed"];
+		else if(element.id == "MarksmanType")
+			typeChampions = ["Akshan", "Aphelios", "Ashe", "Caitlyn", "Corki", "Draven", "Ezreal", "Graves", "Jayce", "Jhin", "Jinx", "Kaisa", "Kalista", "Kennen", "Kindred", "Kog'Maw", "Lucian", "Miss Fortune", "Nilah", "Quinn", "Samira", "Sivir", "Teemo", "Tristana", "Twitch", "Urgot", "Varus", "Vayne", "Zeri"];
+		
+		if(element.value == "selected")
+		{
+			for(i = 0; i < listIds.length; i++)
+			{
+				document.getElementById(listIds[i]).value = "notselected";
+				document.getElementById(listIds[i]).style.borderColor = "#000000";
+			}
+			element.value = "notselected";
+			element.style.borderColor = "#000000";
+			CreateChampionList("False");
+			return;
+		}
+		else
+		{
+			for(i = 0; i < listIds.length; i++)
+			{
+				document.getElementById(listIds[i]).value = "notselected";
+				document.getElementById(listIds[i]).style.borderColor = "#000000";
+			}
+			element.value = "selected";
+			element.style.borderColor = "#F39814";
+		}
+		
+		var possibleChampions = new Array();
+			
+        for (i = 0; i < championNames.length; i++)
+            if (typeChampions.includes(championNames[i].split("##")[0]))
+			{
+				if(comboBox.value == "AllChamps")
+					possibleChampions.splice(possibleChampions.length, 0, championNames[i]);
+				else if(comboBox.value == "ScriptsAvailable" && championNames[i].split("##").length > 1)
+					possibleChampions.splice(possibleChampions.length, 0, championNames[i]);
+				else if(comboBox.value == "ScriptsNotAvailable" && championNames[i].split("##").length == 1)
+					possibleChampions.splice(possibleChampions.length, 0, championNames[i]);
+			}
+			
+		AddChampionsToList(possibleChampions);
+	}
+	function AddChampionsToList(possibleChampions)
+	{
+        var championList = document.getElementById("championList");
+        var scriptList = document.getElementById("scriptList");
+
+        while (scriptList.hasChildNodes())
+            scriptList.removeChild(scriptList.lastChild);
+			
+        while (championList.hasChildNodes())
+            championList.removeChild(championList.lastChild);
+		
+		var hasChampion = "false";
+		var thingToLoad;
+        for(i = 0; i < possibleChampions.length; i++)
+        {
+            var newChampionListItem = document.createElement("li");	
+            var newChampionListItemNode = document.createTextNode(possibleChampions[i].split('##')[0]);
+            newChampionListItem.onclick = function () { LoadChampionScripts(this); };
+//http://ddragon.leagueoflegends.com/tool/
+  			var urlLink = "url('http://ddragon.leagueoflegends.com/cdn/13.16.1/img/champion/"; 
+			var champName = "";
+            newChampionListItem.appendChild(newChampionListItemNode);
+			
+			if(newChampionListItem.innerHTML == "Cho'Gath")
+				champName = "Chogath";
+			else if(newChampionListItem.innerHTML == "Kha'Zix")
+				champName = "Khazix";
+			else if(newChampionListItem.innerHTML == "Vel'Koz")
+				champName = "Velkoz";
+			else if(newChampionListItem.innerHTML == "Fiddlesticks")
+				champName = "Fiddlesticks";
+			else if(newChampionListItem.innerHTML == "Wukong")
+				champName = "MonkeyKing";
+			else if(newChampionListItem.innerHTML == "LeBlanc")
+				champName = "Leblanc";
+			else
+				champName = possibleChampions[i].split('##')[0].replace(" ", "").replace("'", "").replace(".", "");
+			
+			newChampionListItem.style.backgroundImage = urlLink + champName + ".png')";
+			
+			newChampionListItem.style.backgroundSize = "30px 30px";
+			newChampionListItem.style.backgroundPosition = "right";
+			newChampionListItem.style.backgroundRepeat = "no-repeat";
+			newChampionListItem.id = possibleChampions[i].split("##")[0];
+			
+            championList.appendChild(newChampionListItem);
+			
+			if(possibleChampions[i].includes(championList.value))
+			{	
+				thingToLoad = newChampionListItem;
+				hasChampion = "true";
+			}
+			
+			if(possibleChampions.length == 1)
+				LoadChampionScripts(newChampionListItem);
+        }
+		if(hasChampion == "false")
+			championList.value = null;
+		else
+			LoadChampionScripts(thingToLoad);
+	}
+</script>
+<script>
+CreateChampionList('True');
+CreatetypeList();
+</script>
+</html>
